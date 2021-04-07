@@ -1,6 +1,6 @@
 # SSPanel.py
 
-**SSPanel.py** is an API providing basic functinality of the **[Survival Servers](https://www.survivalservers.com/ "survivalservers.com") Control Panel** to Python via HTTP requests.  
+**SSPanel.py** is an API providing basic functinality of the **[Survival Servers](https://www.survivalservers.com/ "survivalservers.com")** *Control Panel* to Python via HTTP requests.  
 Allows for starting, stopping, and restarting a server, as well as getting server info.  
 
 ```python
