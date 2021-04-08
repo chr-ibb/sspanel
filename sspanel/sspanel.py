@@ -1,7 +1,10 @@
 import requests
+import datetime
 from urls import USER_LOGIN_URL, SUBUSER_LOGIN_URL, PANEL_URL, START_URL, STOP_URL, RESTART_URL
 CERT = "../certificate/survivalservers-com-chain.pem"
 
+# TODO check if already logged in  before logging in.
+# TODO replace asserts
 
 class SSPanel:
 	"""A user-created :class:`SSPanel <SSPanel>` object.
@@ -17,7 +20,7 @@ class SSPanel:
 	:param subuser: whether or not the user is a "subuser"
 	:param serverid: server ID of the server. If unknown, open control panel
 		normally in browser, and it will be at the top of the page.
-	:param buffer: time, in seconds, where a second sequential server-action
+	:param limit: time, in seconds, where a second sequential server-action
 		cannot be done. Intended to prevent the server from starting/stopping
 		too frequently. 
 
@@ -57,18 +60,21 @@ class SSPanel:
 		print(info)
 	"""
 
-	def __init__(self, username: str, password: str, subuser: bool, serverid: int, buffer: int = 15):
+	def __init__(self, username: str, password: str, subuser: bool, serverid: int, limit: int = 15):
 		self.username = username
 		self.password = password
 		self.subuser = subuser
 		self.serverid = str(serverid)
 		self.panel_password = None
+		self.limit = datetime.timedelta(seconds=limit)
+		self.last_action = datetime.datetime.now() - self.limit
 		self._login_and(self._find_password)
 
 
 	def start(self):
 		"""Server action for starting the server.
 		Starting an already started server seems to do nothing."""
+		self._check_limit()
 		def start_server(sesh: requests.Session):
 			print("Starting server...")
 			result = self._post_action(sesh, START_URL)
@@ -80,6 +86,7 @@ class SSPanel:
 	def stop(self):
 		"""Server action for stopping the server.
 		Stopping an already stopped server doesn't seem to cause harm."""
+		self._check_limit()
 		def stop_server(sesh: requests.Session):
 			print("Stopping server...")
 			result = self._post_action(sesh, STOP_URL)
@@ -91,6 +98,7 @@ class SSPanel:
 	def restart(self):
 		"""Server action for restarting the server.
 		Restarting a stopped server seems to just start it without harm."""
+		self._check_limit()
 		def restart_server(sesh: requests.Session):
 			print("Restarting server...")
 			result = self._post_action(sesh, RESTART_URL)
@@ -118,14 +126,11 @@ class SSPanel:
 			'username': self.username,
 			'password': self.password
 		}
-
 		with requests.Session() as sesh:
 			resp = sesh.post(url, data=payload, verify=CERT)
 			resp.raise_for_status()
-			#TODO replace assert
 			assert resp.text == '1', "Login failed, check username, password, and subuser."
 			print("Login successfull")
-
 			return task(sesh)
 
 
@@ -155,7 +160,14 @@ class SSPanel:
 				'subuser': '1' if self.subuser else '0'
 			}
 			resp = sesh.post(url, data=payload, verify=CERT)
+			resp.raise_for_status()
+			self.last_action = datetime.datetime.now()
 			return resp.text
+
+
+	def _check_limit(self):
+		delta = datetime.datetime.now() - self.last_action
+		assert  delta > self.limit, f"There must be {self.limit.seconds} seconds between server actions."
 
 
 
