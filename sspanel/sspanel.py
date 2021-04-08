@@ -40,7 +40,6 @@ class SSPanel:
 		>>> serverid = 123456
 		>>> panel = sspanel.SSPanel(username, password, subuser, serverid)
 		Login successfull
-		Panel password found
 		Panel is ready
 
 		>>> panel.start()
@@ -55,6 +54,7 @@ class SSPanel:
 		Login successfull
 		Info gathered
 		>>> print(info)
+		# TODO
 	"""
 
 	def __init__(self, username: str, password: str, subuser: bool, serverid: int, limit: int = 15):
@@ -148,8 +148,7 @@ class SSPanel:
 		start_of_password = resp.text.find(search_phrase) + len(search_phrase)
 		end_of_password = resp.text[start_of_password:].find("&") + start_of_password
 		self.panel_password = resp.text[start_of_password:end_of_password]
-		print("Panel password found     ")
-		print("Panel is ready")
+		print("Panel is ready           ")
 
 
 	def _post_action(self, sesh: requests.Session, url: str):
