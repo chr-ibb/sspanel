@@ -40,24 +40,21 @@ class SSPanel:
 		>>> serverid = 123456
 		>>> panel = sspanel.SSPanel(username, password, subuser, serverid)
 		Login successfull
-		Finding panel password...
 		Panel password found
 		Panel is ready
 
 		>>> panel.start()
 		Login successfull
-		Starting server...
 		Server is started
 
 		>>> panel.stop()
 		Login successfull
-		Stopping server...
 		Server is stopped
 
 		>>> info = panel.info()
 		Login successfull
-		# TODO
-		print(info)
+		Info gathered
+		>>> print(info)
 	"""
 
 	def __init__(self, username: str, password: str, subuser: bool, serverid: int, limit: int = 15):
@@ -76,10 +73,10 @@ class SSPanel:
 		Starting an already started server seems to do nothing."""
 		self._check_limit()
 		def start_server(sesh: requests.Session):
-			print("Starting server...")
+			print("Starting server...\r", end="")
 			result = self._post_action(sesh, START_URL)
 			assert result == '1', "Failed to start server."
-			print("Server is started")
+			print("Server is started ")
 		self._login_and(start_server)
 
 	
@@ -88,10 +85,10 @@ class SSPanel:
 		Stopping an already stopped server doesn't seem to cause harm."""
 		self._check_limit()
 		def stop_server(sesh: requests.Session):
-			print("Stopping server...")
+			print("Stopping server...\r", end="")
 			result = self._post_action(sesh, STOP_URL)
 			assert result == '1', "Failed to stop server."
-			print("Server is stopped")
+			print("Server is stopped ")
 		self._login_and(stop_server)
 
 	
@@ -100,16 +97,19 @@ class SSPanel:
 		Restarting a stopped server seems to just start it without harm."""
 		self._check_limit()
 		def restart_server(sesh: requests.Session):
-			print("Restarting server...")
+			print("Restarting server...\r", end="")
 			result = self._post_action(sesh, RESTART_URL)
 			assert result == '1', "Failed to restart server."
-			print("Server is started")
+			print("Server is started   ")
 		self._login_and(restart_server)
 
 	
 	def info(self):
 		"""Retrieves basic server information, returns it"""
 		def get_info(sesh: requests.Session):
+			print("Gathering info...\r", end="")
+			# TODO get the info
+			print("Info gathered    ")
 			return "info"
 		return self._login_and(get_info)
 
@@ -139,7 +139,7 @@ class SSPanel:
 		This password is a long string of letters and numbers. It might be generated from information we already have, 
 		but I've no idea so we get it this way instead.
 		"""
-		print("Finding panel password...")
+		print("Finding panel password...\r", end="")
 		url = PANEL_URL + self.serverid
 		resp = sesh.get(url, verify=CERT)
 		resp.raise_for_status()
@@ -148,7 +148,7 @@ class SSPanel:
 		start_of_password = resp.text.find(search_phrase) + len(search_phrase)
 		end_of_password = resp.text[start_of_password:].find("&") + start_of_password
 		self.panel_password = resp.text[start_of_password:end_of_password]
-		print("Panel password found")
+		print("Panel password found     ")
 		print("Panel is ready")
 
 
