@@ -34,8 +34,7 @@ class SSPanel:
 
 	Usage::
 		>>> import sspanel
-		>>> username = "aUserName"
-		>>> password = "aP@ssw0rd"
+		>>> username, password = "aUserName", "aP@ssw0rd"
 		>>> subuser = False
 		>>> serverid = 123456
 		>>> panel = sspanel.SSPanel(username, password, subuser, serverid)

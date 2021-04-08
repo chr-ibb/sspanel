@@ -1,6 +1,6 @@
 # SSPanel.py
 
-**SSPanel.py** is an API providing basic functinality of the **[Survival Servers](https://www.survivalservers.com/ "survivalservers.com")** *Control Panel* to Python via HTTP requests.  
+**SSPanel.py** is an API providing basic functinality of the **[Survival Servers](https://www.survivalservers.com/ "survivalservers.com")** *Control Panel* to Python via HTTPS requests.  
 Allows for starting, stopping, and restarting a server, as well as getting server info.  
 
 ```python
@@ -10,18 +10,15 @@ Allows for starting, stopping, and restarting a server, as well as getting serve
 >>> serverid = 123456
 >>> panel = sspanel.SSPanel(username, password, subuser, serverid)
 'Login successfull'
-'Finding panel password...'
-'Panel password found'
+'Panel is ready'
 
 >>> panel.start()
 'Login successfull'
-'Starting server...'
-'Server started successfully'
+'Server is started'
 
 >>> panel.stop()
 'Login successfull'
-'Stopping server...'
-'Server stopped successfully'
+'Server is stopped'
 ```
 
 Makes use of the [Requests](https://github.com/psf/requests) library.
