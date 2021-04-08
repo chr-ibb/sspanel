@@ -8,8 +8,19 @@ CERT = "../certificate/survivalservers-com-chain.pem"
 class SSPanel:
 	"""A user-created :class:`SSPanel <SSPanel>` object.
 
-	Accepts login credentials and server ID, attempts to login,
-	finds encrypted password for server actions in panel page source.
+	Accepts survivalserver.com login credentials and server ID, attempts to login,
+	and finds encrypted password for server actions in control panel page source.
+
+	Once constructed, provides basic Control Panel functionality via
+	member methods.
+
+	:param username: username or subusername of account with access to server.
+	:param password: password which corresponds with username.
+	:param subuser: whether or not the user is a "subuser"
+	:param serverid: server ID of the server. If unknown, open control panel
+		normally in browser, and it will be at the top of the page.
+	:param rate_limit: minimum time between certain server actions.
+		start(), stop(), and restart() are controlled by this limit.
 
 	Usage::
 		>>> import sspanel
@@ -43,7 +54,7 @@ class SSPanel:
 	"""
 
 
-	def __init__(self, username: str, password: str, subuser: bool, serverid: int):
+	def __init__(self, username: str, password: str, subuser: bool, serverid: int, rate_limit = 60):
 		self.username = username
 		self.password = password
 		self.subuser = subuser
@@ -162,5 +173,6 @@ class SSPanel:
 if __name__ == "__main__":
 	print(">>> from login_info import username, password, subuser, serverid")
 	from login_info import username, password, subuser, serverid
+	
 	print(">>> panel = SSPanel(username, password, subuser, serverid)")
 	panel = SSPanel(username, password, subuser, serverid)
