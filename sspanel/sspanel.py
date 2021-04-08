@@ -1,15 +1,13 @@
 import requests
-
 from urls import USER_LOGIN_URL, SUBUSER_LOGIN_URL, PANEL_URL, START_URL, STOP_URL, RESTART_URL
-
 CERT = "../certificate/survivalservers-com-chain.pem"
 
 
 class SSPanel:
 	"""A user-created :class:`SSPanel <SSPanel>` object.
 
-	Accepts survivalserver.com login credentials and server ID, attempts to login,
-	and finds encrypted password for server actions in control panel page source.
+	Accepts SurvivalServer.com login credentials and server ID, attempts to login,
+	and finds encrypted password for server-actions in control panel page source.
 
 	Once constructed, provides basic Control Panel functionality via
 	member methods.
@@ -19,8 +17,17 @@ class SSPanel:
 	:param subuser: whether or not the user is a "subuser"
 	:param serverid: server ID of the server. If unknown, open control panel
 		normally in browser, and it will be at the top of the page.
-	:param rate_limit: minimum time between certain server actions.
-		start(), stop(), and restart() are controlled by this limit.
+	:param buffer: time, in seconds, where a second sequential server-action
+		cannot be done. Intended to prevent the server from starting/stopping
+		too frequently. 
+
+	server-actions:
+	start()
+	stop()
+	restart()
+
+	other methods:
+	info()
 
 	Usage::
 		>>> import sspanel
@@ -32,29 +39,25 @@ class SSPanel:
 		Login successfull
 		Finding panel password...
 		Panel password found
+		Panel is ready
 
 		>>> panel.start()
 		Login successfull
 		Starting server...
-		Server started successfully
-
-		>>> panel.start()
-		Login successfull
-		Server is already started # TODO
+		Server is started
 
 		>>> panel.stop()
 		Login successfull
 		Stopping server...
-		Server stopped successfully
+		Server is stopped
 
-		>>> panel.info()
+		>>> info = panel.info()
 		Login successfull
 		# TODO
-
+		print(info)
 	"""
 
-
-	def __init__(self, username: str, password: str, subuser: bool, serverid: int, rate_limit = 45):
+	def __init__(self, username: str, password: str, subuser: bool, serverid: int, buffer: int = 15):
 		self.username = username
 		self.password = password
 		self.subuser = subuser
@@ -63,80 +66,53 @@ class SSPanel:
 		self._login_and(self._find_password)
 
 
-	def info(self):
-		def get_info(sesh: requests.Session):
-			print("TODO")
-
-		self._login_and(get_info)
-
-
 	def start(self):
+		"""Server action for starting the server.
+		Starting an already started server seems to do nothing."""
 		def start_server(sesh: requests.Session):
-			# TODO: check if server is already started. Does this matter? I'm affraid to try it. 
-			# Maybe just call self.info() to check status? Maybe just let it error and let user handle that. 
-			url = START_URL
-			payload = {
-				'username': self.username,
-				'password': self.panel_password,
-				'gameserverid': self.serverid,
-				'subuser': '1' if self.subuser else '0'
-			}
 			print("Starting server...")
-			resp = sesh.post(url, data=payload, verify=CERT)
-			assert resp.text == '1', "Failed to start server."
-			print("Server started successfully")
-
-
+			result = self._post_action(sesh, START_URL)
+			assert result == '1', "Failed to start server."
+			print("Server is started")
 		self._login_and(start_server)
 
-
+	
 	def stop(self):
+		"""Server action for stopping the server.
+		Stopping an already stopped server doesn't seem to cause harm."""
 		def stop_server(sesh: requests.Session):
-			# TODO: check if server is already stopped. 
-			url = STOP_URL
-			payload = {
-				'username': self.username,
-				'password': self.panel_password,
-				'gameserverid': self.serverid,
-				'subuser': '1' if self.subuser else '0'
-			}
 			print("Stopping server...")
-			resp = sesh.post(url, data=payload, verify=CERT)
-			assert resp.text == '1', "Failed to stop server."
-			print("Server stopped successfully")
-
+			result = self._post_action(sesh, STOP_URL)
+			assert result == '1', "Failed to stop server."
+			print("Server is stopped")
 		self._login_and(stop_server)
 
-
-
+	
 	def restart(self):
+		"""Server action for restarting the server.
+		Restarting a stopped server seems to just start it without harm."""
 		def restart_server(sesh: requests.Session):
-			# TODO: check if server is already started. Suggest start if it is. 
-			url = RESTART_URL
-			payload = {
-				'username': self.username,
-				'password': self.panel_password,
-				'gameserverid': self.serverid,
-				'subuser': '1' if self.subuser else '0'
-			}
 			print("Restarting server...")
-			resp = sesh.post(url, data=payload, verify=CERT)
-			assert resp.text == '1', "Failed to restart server."
-			print("Server restarted successfully")
-
+			result = self._post_action(sesh, RESTART_URL)
+			assert result == '1', "Failed to restart server."
+			print("Server is started")
 		self._login_and(restart_server)
 
+	
+	def info(self):
+		"""Retrieves basic server information, returns it"""
+		def get_info(sesh: requests.Session):
+			return "info"
+		return self._login_and(get_info)
 
-
-	# "Private" Methods:
 
 	def _login_and(self, task):
 		"""Opens a request session, attempts to log in, carries out task with the session, closes the session.
-		All api methods use this method; the intention is to never leave a session lingering. 
-		:param task: Callback to be run with session
-		:type task: (requests.Session) -> None
-		"""
+		All public api methods utilize this method; the intention is to never leave a session lingering. 
 
+		:param task: Callback to be run with session; should accept a Session as a parameter.
+		:return: typically None. get_info(sesh) returns the server information.
+		"""
 		url = USER_LOGIN_URL if not self.subuser else SUBUSER_LOGIN_URL
 		payload = {
 			'username': self.username,
@@ -146,19 +122,19 @@ class SSPanel:
 		with requests.Session() as sesh:
 			resp = sesh.post(url, data=payload, verify=CERT)
 			resp.raise_for_status()
+			#TODO replace assert
 			assert resp.text == '1', "Login failed, check username, password, and subuser."
 			print("Login successfull")
 
-			task(sesh)
-
+			return task(sesh)
 
 
 	def _find_password(self, sesh: requests.Session):
-		"""Opens the server's control panel in order to find the special password needed for start, stop, and restart forms.
+		"""Searches the Control Panel page source and finds the password needed for server-action post request forms.
 		This password is a long string of letters and numbers. It might be generated from information we already have, 
-		like the user password, but I've no idea so we get it this way instead.
+		but I've no idea so we get it this way instead.
 		"""
-		print("Finding panel password")
+		print("Finding panel password...")
 		url = PANEL_URL + self.serverid
 		resp = sesh.get(url, verify=CERT)
 		resp.raise_for_status()
@@ -168,8 +144,22 @@ class SSPanel:
 		end_of_password = resp.text[start_of_password:].find("&") + start_of_password
 		self.panel_password = resp.text[start_of_password:end_of_password]
 		print("Panel password found")
+		print("Panel is ready")
 
 
+	def _post_action(self, sesh: requests.Session, url: str):
+			payload = {
+				'username': self.username,
+				'password': self.panel_password,
+				'gameserverid': self.serverid,
+				'subuser': '1' if self.subuser else '0'
+			}
+			resp = sesh.post(url, data=payload, verify=CERT)
+			return resp.text
+
+
+
+# Mostly used for testing.
 if __name__ == "__main__":
 	print(">>> from login_info import username, password, subuser, serverid")
 	from login_info import username, password, subuser, serverid
