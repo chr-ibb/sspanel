@@ -6,7 +6,10 @@ CERT = "../certificate/survivalservers-com-chain.pem"
 
 
 class SSPanel:
-	"""
+	"""A user-created :class:`SSPanel <SSPanel>` object.
+
+	Accepts login credentials and server ID, attempts to login,
+	finds encrypted password for server actions in panel page source.
 
 	Usage::
 		>>> import sspanel
