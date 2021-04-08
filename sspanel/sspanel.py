@@ -26,7 +26,7 @@ class SSPanel:
 		>>> import sspanel
 		>>> username = "aUserName"
 		>>> password = "aP@ssw0rd"
-		>>> subuser = false
+		>>> subuser = False
 		>>> serverid = 123456
 		>>> panel = sspanel.SSPanel(username, password, subuser, serverid)
 		Login successfull
@@ -54,7 +54,7 @@ class SSPanel:
 	"""
 
 
-	def __init__(self, username: str, password: str, subuser: bool, serverid: int, rate_limit = 60):
+	def __init__(self, username: str, password: str, subuser: bool, serverid: int, rate_limit = 45):
 		self.username = username
 		self.password = password
 		self.subuser = subuser
@@ -173,6 +173,6 @@ class SSPanel:
 if __name__ == "__main__":
 	print(">>> from login_info import username, password, subuser, serverid")
 	from login_info import username, password, subuser, serverid
-	
+
 	print(">>> panel = SSPanel(username, password, subuser, serverid)")
 	panel = SSPanel(username, password, subuser, serverid)

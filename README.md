@@ -6,7 +6,7 @@ Allows for starting, stopping, and restarting a server, as well as getting serve
 ```python
 >>> import sspanel
 >>> username, password = "aUserName", "aP@ssw0rd"
->>> subuser = false
+>>> subuser = False
 >>> serverid = 123456
 >>> panel = sspanel.SSPanel(username, password, subuser, serverid)
 'Login successfull'
