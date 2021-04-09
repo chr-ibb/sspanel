@@ -1,7 +1,7 @@
 # SSPanel.py
 
 **SSPanel.py** is a simple API providing the basic functionality of the **[SurvivalServers.com](https://www.survivalservers.com/)** Control Panel to Python  
-via HTTPS requests. It allows for **start**ing, **stop**ping, and **restart**ing a server, as well as retrieving server **info**.  
+via HTTPS requests. It allows for starting, stopping, and restarting a server, as well as retrieving server info.  
 
 ```python
 >>> import sspanel
@@ -33,5 +33,31 @@ via HTTPS requests. It allows for **start**ing, **stop**ping, and **restart**ing
 # TODO
 
 ```
+
+## Main Interface
+
+sspanel.**start**(username, password, subuser, serverid)  
+    Attempts to start the server described by the credentials passed in.
+
+sspanel.**stop**(username, password, subuser, serverid)  
+    Attempts to stop the server described by the credentials passed in.
+
+sspanel.**restart**(username, password, subuser, serverid)  
+    Attempts to restart the server described by the credentials passed in.
+
+sspanel.**info**(username, password, subuser, serverid)  
+    Attempts to retrieve and return info about the server described by the credentials passed in.  
+    **Returns:** a ServerInfo object.
+
+## Lower-Level Classes
+
+sspanel.**ControlPanel**(username, password, subuser, serverid)
+
+sspanel.**ServerInfo**  
+    #TODO
+
+## Etc
+
+Only tested with a Valheim server; that is all I have access to. 
 
 Makes use of the [Requests](https://github.com/psf/requests) library.
