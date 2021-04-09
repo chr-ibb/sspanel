@@ -1,13 +1,12 @@
 import requests
 import datetime
-from urls import USER_LOGIN_URL, SUBUSER_LOGIN_URL, PANEL_URL, START_URL, STOP_URL, RESTART_URL
-CERT = "../certificate/survivalservers-com-chain.pem"
+from .urls import USER_LOGIN_URL, SUBUSER_LOGIN_URL, PANEL_URL, START_URL, STOP_URL, RESTART_URL
+CERT = "certificate/survivalservers-com-chain.pem"
 
-# TODO check if already logged in  before logging in.
 # TODO replace asserts
 
-class SSPanel:
-	"""A user-created :class:`SSPanel <SSPanel>` object.
+class ControlPanel:
+	"""A user-created :class:`ControlPanel <ControlPanel>` object.
 
 	Accepts SurvivalServer.com login credentials and server ID, attempts to login,
 	and finds encrypted password for server-actions in control panel page source.
@@ -37,9 +36,9 @@ class SSPanel:
 		>>> username, password = "aUserName", "aP@ssw0rd"
 		>>> subuser = False
 		>>> serverid = 123456
-		>>> panel = sspanel.SSPanel(username, password, subuser, serverid)
+		>>> panel = sspanel.ControlPanel(username, password, subuser, serverid)
 		Login successfull
-		Panel is ready
+		Control Panel is ready
 
 		>>> panel.start()
 		Login successfull
@@ -147,7 +146,7 @@ class SSPanel:
 		start_of_password = resp.text.find(search_phrase) + len(search_phrase)
 		end_of_password = resp.text[start_of_password:].find("&") + start_of_password
 		self.panel_password = resp.text[start_of_password:end_of_password]
-		print("Panel is ready           ")
+		print("Control Panel is ready   ")
 
 
 	def _post_action(self, sesh: requests.Session, url: str):
@@ -166,13 +165,4 @@ class SSPanel:
 	def _check_limit(self):
 		delta = datetime.datetime.now() - self.last_action
 		assert  delta > self.limit, f"There must be {self.limit.seconds} seconds between server actions."
-
-
-
-# Mostly used for testing.
-if __name__ == "__main__":
-	print(">>> from login_info import username, password, subuser, serverid")
-	from login_info import username, password, subuser, serverid
-
-	print(">>> panel = SSPanel(username, password, subuser, serverid)")
-	panel = SSPanel(username, password, subuser, serverid)
+		
