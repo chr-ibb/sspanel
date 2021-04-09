@@ -2,6 +2,7 @@
 
 # TODO Check compatibility
 
-from .api import start, stop, restart, info
 from .control_panel import ControlPanel
 from .server_info import ServerInfo
+from .api import start, stop, restart, info
+
