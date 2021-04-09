@@ -20,15 +20,13 @@ class ControlPanel:
 	:param serverid: Unique ID associated with the server. Visible in browser.
 	:param limit: (default) Time, in seconds, where a second sequential server-action
 		cannot be done. Intended to prevent the server from starting/stopping
-		too frequently. 
+		too frequently. (does not affect info() method)
 
-	server-actions:
-	start()
-	stop()
-	restart()
-
-	other methods:
-	info()
+	methods:
+		start()
+		stop()
+		restart()
+		info()
 
 	Usage::
 		>>> import sspanel
