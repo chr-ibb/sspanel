@@ -49,7 +49,7 @@ via HTTPS requests. It allows for starting, stopping, and restarting a server, a
     - Attempts to retrieve and return info about the server described by the credentials passed in.
     - **Returns:** a ServerInfo object.
 
-## Lower-Level Classes
+## Classes
 
 - sspanel.**ControlPanel**(username, password, subuser, serverid)  
     - #TODO
