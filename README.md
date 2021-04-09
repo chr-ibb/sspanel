@@ -25,9 +25,11 @@ via HTTPS requests. It allows for starting, stopping, and restarting a server, a
 >>> panel = sspanel.ControlPanel(username, password, subuser, serverid)
 'Login successful'
 'Control Panel is ready'
+
 >>> panel.restart()
 'Login successful'
 'Server is started'
+
 >>> panel.stop()
 'Login successful'
 'Server is stopped'
