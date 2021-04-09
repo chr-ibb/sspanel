@@ -60,14 +60,14 @@ class ControlPanel:
 		self.password = password
 		self.subuser = subuser
 		self.serverid = str(serverid)
-		self.panel_password = None
 		self.limit = datetime.timedelta(seconds=limit)
 		self.last_action = datetime.datetime.now() - self.limit
+		self.panel_password = None # reassigned next line
 		self._login_and(self._find_password)
 
 
 	def start(self):
-		"""Server action for starting the server.
+		"""Server-action for starting the server.
 		Starting an already started server seems to do nothing."""
 		self._check_limit()
 		def start_server(sesh: requests.Session):
@@ -79,7 +79,7 @@ class ControlPanel:
 
 	
 	def stop(self):
-		"""Server action for stopping the server.
+		"""Server-action for stopping the server.
 		Stopping an already stopped server doesn't seem to cause harm."""
 		self._check_limit()
 		def stop_server(sesh: requests.Session):
@@ -91,7 +91,7 @@ class ControlPanel:
 
 	
 	def restart(self):
-		"""Server action for restarting the server.
+		"""Server-action for restarting the server.
 		Restarting a stopped server seems to just start it without harm."""
 		self._check_limit()
 		def restart_server(sesh: requests.Session):
