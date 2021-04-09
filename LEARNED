@@ -1,0 +1,16 @@
+Catalog of concepts and skills I learned, practiced, or reviewed while working on this project.
+Feel free to delete this file if you are using SSPanel.
+
+Concepts and skills learned (zero prior experience):
+	HTTP, HTTPS
+	TLS/SSL certificates, CAs
+	Inspecting web page source
+	Monitoring XHR traffic to find the keys/values required for a post request form
+	Data encryption
+
+Concepts and skills practiced (little to moderate prior experience):
+	Python packages and modules
+	Git
+
+Concepts and skills reviewed (substantial prior experience):
+	Python
