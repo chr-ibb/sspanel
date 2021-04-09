@@ -1,3 +1,5 @@
-sspanel/login_info.py
+.gitignore
+login_info.py
 __pycache__
 which.py
+test.py

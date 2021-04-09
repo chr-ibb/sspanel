@@ -8,6 +8,8 @@ USER_LOGIN_URL = "https://www.survivalservers.com/sspanel/includes/ajax/validate
 
 SUBUSER_LOGIN_URL = "https://www.survivalservers.com/sspanel/includes/ajax/validate_subuser_login.php"
 
+LOGOUT_URL = "https://www.survivalservers.com/sspanel/user/?logout"
+
 #PANEL_URL is incomplete; the server ID must be appended to it. 
 PANEL_URL = "https://www.survivalservers.com/sspanel/user/?gameservers&gameserverid="
 
