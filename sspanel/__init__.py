@@ -1,4 +1,4 @@
-# Code heading. Description, copyright, licence, author, etc. 
+# Code heading. Description, copyright, license, author, etc. 
 
 # TODO Check compatibility
 

@@ -14,12 +14,11 @@ class ControlPanel:
 	Once constructed, provides basic Control Panel functionality via
 	member methods.
 
-	:param username: username or subusername of account with access to server.
-	:param password: password which corresponds with username.
-	:param subuser: whether or not the user is a "subuser"
-	:param serverid: server ID of the server. If unknown, open control panel
-		normally in browser, and it will be at the top of the page.
-	:param limit: time, in seconds, where a second sequential server-action
+	:param username: username of an account with access to the server.
+	:param password: password associated with username.
+	:param subuser: whether or not the user is a subuser.
+	:param serverid: Unique ID associated with the server. Visible in browser.
+	:param limit: (default) Time, in seconds, where a second sequential server-action
 		cannot be done. Intended to prevent the server from starting/stopping
 		too frequently. 
 
@@ -33,23 +32,22 @@ class ControlPanel:
 
 	Usage::
 		>>> import sspanel
-		>>> username, password = "aUserName", "aP@ssw0rd"
-		>>> subuser = False
+		>>> username, password, subuser = "aUserName", "aP@ssw0rd", False
 		>>> serverid = 123456
 		>>> panel = sspanel.ControlPanel(username, password, subuser, serverid)
-		Login successfull
+		Login successful
 		Control Panel is ready
 
 		>>> panel.start()
-		Login successfull
+		Login successful
 		Server is started
 
 		>>> panel.stop()
-		Login successfull
+		Login successful
 		Server is stopped
 
 		>>> info = panel.info()
-		Login successfull
+		Login successful
 		Info gathered
 		>>> print(info)
 		# TODO
@@ -80,7 +78,7 @@ class ControlPanel:
 	
 	def stop(self):
 		"""Server-action for stopping the server.
-		Stopping an already stopped server doesn't seem to cause harm."""
+		Stopping an already stopped server seems to do nothing."""
 		self._check_limit()
 		def stop_server(sesh: requests.Session):
 			print("Stopping server...\r", end="")
@@ -92,7 +90,7 @@ class ControlPanel:
 	
 	def restart(self):
 		"""Server-action for restarting the server.
-		Restarting a stopped server seems to just start it without harm."""
+		Restarting a stopped server seems to just start it."""
 		self._check_limit()
 		def restart_server(sesh: requests.Session):
 			print("Restarting server...\r", end="")
@@ -128,7 +126,7 @@ class ControlPanel:
 			resp = sesh.post(url, data=payload, verify=CERT)
 			resp.raise_for_status()
 			assert resp.text == '1', "Login failed, check username, password, and subuser."
-			print("Login successfull")
+			print("Login successful")
 			return task(sesh)
 
 
