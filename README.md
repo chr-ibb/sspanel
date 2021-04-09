@@ -8,9 +8,9 @@ via HTTPS requests. It allows for starting, stopping, and restarting a server, a
 >>> username, password = "aUserName", "aP@ssw0rd"
 >>> subuser = False
 >>> serverid = 123456
->>> panel = sspanel.SSPanel(username, password, subuser, serverid)
+>>> panel = sspanel.ControlPanel(username, password, subuser, serverid)
 'Login successfull'
-'Panel is ready'
+'Control Panel is ready'
 
 >>> panel.start()
 'Login successfull'
