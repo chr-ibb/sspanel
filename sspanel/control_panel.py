@@ -1,9 +1,11 @@
 import requests
 import datetime
 from .urls import USER_LOGIN_URL, SUBUSER_LOGIN_URL, PANEL_URL, START_URL, STOP_URL, RESTART_URL
+from .server_info import ServerInfo
 CERT = "certificate/survivalservers-com-chain.pem"
 
 # TODO replace asserts
+# TODO only find panel password if doing a server action? 
 
 class ControlPanel:
 	"""A user-created :class:`ControlPanel <ControlPanel>` object.
@@ -102,9 +104,12 @@ class ControlPanel:
 		"""Retrieves basic server information, returns it"""
 		def get_info(sesh: requests.Session):
 			print("Gathering info...\r", end="")
-			# TODO get the info
+			url = PANEL_URL + self.serverid
+			resp = sesh.get(url, verify=CERT)
+			resp.raise_for_status()
+			s_info = ServerInfo(resp.text)
 			print("Info gathered    ")
-			return "info"
+			return s_info
 		return self._login_and(get_info)
 
 
@@ -138,7 +143,7 @@ class ControlPanel:
 		resp = sesh.get(url, verify=CERT)
 		resp.raise_for_status()
 		# Extract these strings?
-		search_phrase = "username=" + username + "&password="
+		search_phrase = "username=" + self.username + "&password="
 		start_of_password = resp.text.find(search_phrase) + len(search_phrase)
 		end_of_password = resp.text[start_of_password:].find("&") + start_of_password
 		self.panel_password = resp.text[start_of_password:end_of_password]
@@ -161,4 +166,12 @@ class ControlPanel:
 	def _check_limit(self):
 		delta = datetime.datetime.now() - self.last_action
 		assert  delta > self.limit, f"There must be {self.limit.seconds} seconds between server actions."
-		
+
+
+	# For testing
+	def _panel_text(self):
+		def get_panel_text(sesh):
+			url = PANEL_URL + self.serverid
+			resp = sesh.get(url, verify=CERT)
+			return resp.text
+		return self._login_and(get_panel_text)
