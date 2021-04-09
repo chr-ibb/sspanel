@@ -36,26 +36,26 @@ via HTTPS requests. It allows for starting, stopping, and restarting a server, a
 
 ## Main Interface
 
-### sspanel.*start*(username, password, subuser, serverid)  
-- Attempts to start the server described by the credentials passed in.
+- sspanel.**start**(username, password, subuser, serverid)  
+    - Attempts to start the server described by the credentials passed in.
 
-### sspanel.*stop*(username, password, subuser, serverid)  
-- Attempts to stop the server described by the credentials passed in.
+- sspanel.**stop**(username, password, subuser, serverid)  
+    - Attempts to stop the server described by the credentials passed in.
 
-### sspanel.*restart*(username, password, subuser, serverid)  
-- Attempts to restart the server described by the credentials passed in.
+- sspanel.**restart**(username, password, subuser, serverid)  
+    - Attempts to restart the server described by the credentials passed in.
 
-### sspanel.*info*(username, password, subuser, serverid)  
-- Attempts to retrieve and return info about the server described by the credentials passed in.
-- **Returns:** a ServerInfo object.
+- sspanel.**info**(username, password, subuser, serverid)  
+    - Attempts to retrieve and return info about the server described by the credentials passed in.
+    - **Returns:** a ServerInfo object.
 
 ## Lower-Level Classes
 
-### sspanel.*ControlPanel*(username, password, subuser, serverid)  
-- #TODO
+- sspanel.**ControlPanel**(username, password, subuser, serverid)  
+    - #TODO
 
-### sspanel.*ServerInfo*  
-- #TODO
+- sspanel.**ServerInfo**  
+    - #TODO
 
 ## Etc
 
