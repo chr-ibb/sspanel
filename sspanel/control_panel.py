@@ -49,8 +49,12 @@ class ControlPanel:
 		>>> info = panel.info()
 		Login successful
 		Info gathered
-		>>> print(info)
-		# TODO
+		>>> info
+		title: aServerTitle
+		status: Started
+		players: 0/10
+		status info: Ready
+		...
 	"""
 
 	def __init__(self, username: str, password: str, subuser: bool, serverid: int, limit: int = 15):
@@ -112,7 +116,7 @@ class ControlPanel:
 			return s_info
 		return self._login_and(get_info)
 
-
+	# TODO consider moving these out of class and passing in anything needed? That will hide them.
 	def _login_and(self, task):
 		"""Opens a request session, attempts to log in, carries out task with the session, closes the session.
 		All public api methods utilize this method; the intention is to never leave a session lingering. 
