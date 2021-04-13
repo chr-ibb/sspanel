@@ -1,9 +1,8 @@
 # TODO header
-# TODO am I using search_between? should I switch them around? 
 
 def find_between(s: str, before: str, after: str):
-	"""Searches a string and finds the first substring found between the
-	before and after substrings, if they are found.
+	"""Searches string S and finds the first substring found between the
+	BEFORE and AFTER substrings, if they are found.
 	
 	Returns the indexes of the start and end of the found substring,
 	such that s[start:end] would be the substring. (first character, last character + 1)
@@ -47,7 +46,8 @@ def string_between(s: str, before: str, after: str):
 
 
 def multi_find(s: str, f: str):
-	"""finds every occurrence of substring F in string S"""
+	"""Finds every occurrence of substring F in string S.
+	Returns a list of indexes where each occurence starts."""
 	res = []
 	scanned = 0
 	while len(s) > 0:
