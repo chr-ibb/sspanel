@@ -10,28 +10,27 @@ via HTTPS requests. It allows for starting, stopping, and restarting a server, a
 
 # Start the server. 
 >>> sspanel.start(username, password, subuser, serverid)
-'Login successful'
-'Control Panel is ready'
 'Server is started'
 
 # Retrieve basic server information.
 >>> info = sspanel.info(username, password, subuser, serverid)
-'Login successful'
 'Info gathered'
 >>> print(info)
-# TODO
+title: ServerTitle
+status: Started, Ready
+players: 3/22
+last start: 04/1/2021 04:20:00
+game version: v0.123.4
+ip address: 111.111.11.11
+game port: 9876
+query port: 9877
 
 # Alternatively: create a ControlPanel object; make sequential calls with the same server. 
 >>> panel = sspanel.ControlPanel(username, password, subuser, serverid)
-'Login successful'
-'Control Panel is ready'
-
 >>> panel.restart()
-'Login successful'
 'Server is started'
 
 >>> panel.stop()
-'Login successful'
 'Server is stopped'
 
 ```
