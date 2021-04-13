@@ -3,9 +3,11 @@ import datetime
 from .urls import USER_LOGIN_URL, SUBUSER_LOGIN_URL, PANEL_URL, START_URL, STOP_URL, RESTART_URL
 from .server_info import ServerInfo
 from .utils import string_between
+from .exceptions import (
+	LoginError, PanelPasswordError, ServerStartError, ServerStopError, ServerRestartError, LimitExceededError)
+
 CERT = "certificate/survivalservers-com-chain.pem"
 
-# TODO replace asserts
 # TODO ensure the CERT file works. Right now I have it in two locations, it seems to depend where you are running python from...
 # it should just always check the same place. 
 
@@ -72,12 +74,16 @@ class ControlPanel:
 		"""Server-action for starting the server.
 		Starting an already started server seems to do nothing."""
 		self.__check_limit()
-		if not self.panel_password: self.__login_and(self.__find_password)
+		if not self.panel_password:
+			self.__login_and(self.__find_password)
+
 		def start_server(sesh: requests.Session):
 			print("Starting server...       \r", end="")
 			result = self.__post_action(sesh, START_URL)
-			assert result == '1', "Failed to start server."
+			if result != '1':
+				raise ServerStartError()
 			print("Server is started        ")
+
 		self.__login_and(start_server)
 
 	
@@ -85,12 +91,16 @@ class ControlPanel:
 		"""Server-action for stopping the server.
 		Stopping an already stopped server seems to do nothing."""
 		self.__check_limit()
-		if not self.panel_password: self.__login_and(self.__find_password)
+		if not self.panel_password:
+			self.__login_and(self.__find_password)
+
 		def stop_server(sesh: requests.Session):
 			print("Stopping server...       \r", end="")
 			result = self.__post_action(sesh, STOP_URL)
-			assert result == '1', "Failed to stop server."
+			if result != '1':
+				raise ServerStopError()
 			print("Server is stopped        ")
+
 		self.__login_and(stop_server)
 
 	
@@ -98,12 +108,16 @@ class ControlPanel:
 		"""Server-action for restarting the server.
 		Restarting a stopped server seems to just start it."""
 		self.__check_limit()
-		if not self.panel_password: self.__login_and(self.__find_password)
+		if not self.panel_password:
+			self.__login_and(self.__find_password)
+
 		def restart_server(sesh: requests.Session):
 			print("Restarting server...     \r", end="")
 			result = self.__post_action(sesh, RESTART_URL)
-			assert result == '1', "Failed to restart server."
+			if result != '1':
+				raise ServerRestartError()
 			print("Server is started        ")
+
 		self.__login_and(restart_server)
 
 	
@@ -122,18 +136,18 @@ class ControlPanel:
 
 	def get_password(self):
 		"""Finds and saves the panel password. This password is usually found automatically
-		the first time it is needed. Use this to find it earlier than neccessary, to save time later."""
+		the first time it is needed. Use this to find it earlier than necessary, to save time later."""
 		self.__login_and(self.__find_password)
 
 
 	# "Private" Methods #
 	
 	def __login_and(self, task):
-		"""Opens a request session, attempts to log in, carries out task with the session, closes the session.
-		All public api methods utilize this method; the intention is to never leave a session lingering. 
+		"""Opens a request session, attempts to log in, carries out TASK with the session, closes the session.
+		All api methods utilize this method; the intention is to never leave a session lingering. 
 
 		:param task: Callback to be run with session; should accept a Session as a parameter.
-		:return: typically None. get_info(sesh) returns the server information.
+		:return: typically None. get_info(sesh) returns a ServerInfo instance.
 		"""
 		url = USER_LOGIN_URL if not self.subuser else SUBUSER_LOGIN_URL
 		payload = {
@@ -143,7 +157,8 @@ class ControlPanel:
 		with requests.Session() as sesh:
 			resp = sesh.post(url, data=payload, verify=CERT)
 			resp.raise_for_status()
-			assert resp.text == '1', "Login failed, check username, password, and subuser."
+			if resp.text != '1':
+				raise LoginError()
 			print("Login successful         \r", end="")
 			return task(sesh)
 
@@ -157,38 +172,43 @@ class ControlPanel:
 		url = PANEL_URL + self.serverid
 		resp = sesh.get(url, verify=CERT)
 		resp.raise_for_status()
-
-		# TODO Extract these strings?
 		search_phrase = "username=" + self.username + "&password="
 		p = string_between(resp.text, search_phrase, "&")
 		if p: 
 			self.panel_password = p
 		else:
-			assert False, "panel password not found"
+			raise PanelPasswordError()
 
 
 	def __post_action(self, sesh: requests.Session, url: str):
-			payload = {
-				'username': self.username,
-				'password': self.panel_password,
-				'gameserverid': self.serverid,
-				'subuser': '1' if self.subuser else '0'
-			}
-			resp = sesh.post(url, data=payload, verify=CERT)
-			resp.raise_for_status()
-			self.last_action = datetime.datetime.now()
-			return resp.text
+		"""Consolidates code between start, stop, and restart methods.
+		Creates a post request using the session and url passed in. 
+		"""
+		payload = {
+			'username': self.username,
+			'password': self.panel_password,
+			'gameserverid': self.serverid,
+			'subuser': '1' if self.subuser else '0'
+		}
+		resp = sesh.post(url, data=payload, verify=CERT)
+		resp.raise_for_status()
+		self.last_action = datetime.datetime.now()
+		return resp.text
 
 
 	def __check_limit(self):
+		"""Checks whether the rate limit has been exceeded."""
 		delta = datetime.datetime.now() - self.last_action
-		assert  delta > self.limit, f"There must be {self.limit.seconds} seconds between server actions."
+		if  delta < self.limit:
+			raise LimitExceededError(self.limit.seconds)
 
 
 	# For testing
 	def __panel_text(self):
+		"""Returns the page source text of the server's Control Panel"""
 		def get_panel_text(sesh):
 			url = PANEL_URL + self.serverid
 			resp = sesh.get(url, verify=CERT)
+			resp.raise_for_status()
 			return resp.text
 		return self.__login_and(get_panel_text)
