@@ -6,7 +6,6 @@ from .utils import string_between
 CERT = "certificate/survivalservers-com-chain.pem"
 
 # TODO replace asserts
-# TODO only find panel password if doing a server action? 
 # TODO ensure the CERT file works. Right now I have it in two locations, it seems to depend where you are running python from...
 # it should just always check the same place. 
 
@@ -72,40 +71,40 @@ class ControlPanel:
 	def start(self):
 		"""Server-action for starting the server.
 		Starting an already started server seems to do nothing."""
-		self._check_limit()
-		if not self.panel_password: self._login_and(self._find_password)
+		self.__check_limit()
+		if not self.panel_password: self.__login_and(self.__find_password)
 		def start_server(sesh: requests.Session):
 			print("Starting server...       \r", end="")
-			result = self._post_action(sesh, START_URL)
+			result = self.__post_action(sesh, START_URL)
 			assert result == '1', "Failed to start server."
 			print("Server is started        ")
-		self._login_and(start_server)
+		self.__login_and(start_server)
 
 	
 	def stop(self):
 		"""Server-action for stopping the server.
 		Stopping an already stopped server seems to do nothing."""
-		self._check_limit()
-		if not self.panel_password: self._login_and(self._find_password)
+		self.__check_limit()
+		if not self.panel_password: self.__login_and(self.__find_password)
 		def stop_server(sesh: requests.Session):
 			print("Stopping server...       \r", end="")
-			result = self._post_action(sesh, STOP_URL)
+			result = self.__post_action(sesh, STOP_URL)
 			assert result == '1', "Failed to stop server."
 			print("Server is stopped        ")
-		self._login_and(stop_server)
+		self.__login_and(stop_server)
 
 	
 	def restart(self):
 		"""Server-action for restarting the server.
 		Restarting a stopped server seems to just start it."""
-		self._check_limit()
-		if not self.panel_password: self._login_and(self._find_password)
+		self.__check_limit()
+		if not self.panel_password: self.__login_and(self.__find_password)
 		def restart_server(sesh: requests.Session):
 			print("Restarting server...     \r", end="")
-			result = self._post_action(sesh, RESTART_URL)
+			result = self.__post_action(sesh, RESTART_URL)
 			assert result == '1', "Failed to restart server."
 			print("Server is started        ")
-		self._login_and(restart_server)
+		self.__login_and(restart_server)
 
 	
 	def info(self):
@@ -118,10 +117,18 @@ class ControlPanel:
 			s_info = ServerInfo(resp.text)
 			print("Info gathered            ")
 			return s_info
-		return self._login_and(get_info)
+		return self.__login_and(get_info)
 
-	# TODO consider moving these out of class and passing in anything needed? That will hide them.
-	def _login_and(self, task):
+
+	def get_password(self):
+		"""Finds and saves the panel password. This password is usually found automatically
+		the first time it is needed. Use this to find it earlier than neccessary, to save time later."""
+		self.__login_and(self.__find_password)
+
+
+	# "Private" Methods #
+	
+	def __login_and(self, task):
 		"""Opens a request session, attempts to log in, carries out task with the session, closes the session.
 		All public api methods utilize this method; the intention is to never leave a session lingering. 
 
@@ -141,7 +148,7 @@ class ControlPanel:
 			return task(sesh)
 
 
-	def _find_password(self, sesh: requests.Session):
+	def __find_password(self, sesh: requests.Session):
 		"""Searches the Control Panel page source and finds the password needed for server-action post request forms.
 		This password is a long string of letters and numbers. It might be generated from information we already have, 
 		but I've no idea so we get it this way instead.
@@ -160,7 +167,7 @@ class ControlPanel:
 			assert False, "panel password not found"
 
 
-	def _post_action(self, sesh: requests.Session, url: str):
+	def __post_action(self, sesh: requests.Session, url: str):
 			payload = {
 				'username': self.username,
 				'password': self.panel_password,
@@ -173,15 +180,15 @@ class ControlPanel:
 			return resp.text
 
 
-	def _check_limit(self):
+	def __check_limit(self):
 		delta = datetime.datetime.now() - self.last_action
 		assert  delta > self.limit, f"There must be {self.limit.seconds} seconds between server actions."
 
 
 	# For testing
-	def _panel_text(self):
+	def __panel_text(self):
 		def get_panel_text(sesh):
 			url = PANEL_URL + self.serverid
 			resp = sesh.get(url, verify=CERT)
 			return resp.text
-		return self._login_and(get_panel_text)
+		return self.__login_and(get_panel_text)
