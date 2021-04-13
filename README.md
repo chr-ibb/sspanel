@@ -16,14 +16,14 @@ via HTTPS requests. It allows for starting, stopping, and restarting a server, a
 >>> info = sspanel.info(username, password, subuser, serverid)
 'Info gathered'
 >>> print(info)
-title: ServerTitle
-status: Started, Ready
-players: 3/22
-last start: 04/1/2021 04:20:00
-game version: v0.123.4
-ip address: 111.111.11.11
-game port: 9876
-query port: 9877
+'title: ServerTitle'
+'status: Started, Ready'
+'players: 3/22'
+'last start: 04/1/2021 04:20:00'
+'game version: v0.123.4'
+'ip address: 111.111.11.11'
+'game port: 9876'
+'query port: 9877'
 
 # Alternatively: create a ControlPanel object; make sequential calls with the same server. 
 >>> panel = sspanel.ControlPanel(username, password, subuser, serverid)
