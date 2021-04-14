@@ -52,11 +52,12 @@ via HTTPS requests. It allows for starting, stopping, and restarting a server, a
 
 ## Classes
 
-- sspanel.**ControlPanel**(username, password, subuser, serverid)  
-    - #TODO
+- sspanel.**ControlPanel**(username, password, subuser, serverid, limit=15)  
+    - ControlPanel object which stores login credentials and serverid, allowing for sequential actions on the same server. 
+    - *limit* parameter is the minimum time (in seconds) between sequential server actions (aside from .info(), which is not limited).
 
 - sspanel.**ServerInfo**  
-    - #TODO
+    - ServerInfo object which stores all of the information retrieved from a ControlPanel.info() call.
 
 
 ## Installing SSPanel
