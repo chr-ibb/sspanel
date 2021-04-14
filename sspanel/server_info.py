@@ -1,8 +1,13 @@
-# TODO header
+"""
+sspanel.server_info
+
+Data Class for storing server information.
+"""
 
 from .utils import string_between
 
 class ServerInfo:
+	"""A :class:`ServerInfo <ServerInfo>` object, created by the ControlPanel info() method."""
 
 	def __init__(self, page_source: str):
 		relevant = string_between(page_source, "GAME SERVER ID #", "FTP Details")

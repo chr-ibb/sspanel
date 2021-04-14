@@ -1,3 +1,10 @@
+"""
+sspanel.control_panel
+
+This module contains the ControlPanel class, the primary object powering SSPanel.
+"""
+
+
 import requests
 import datetime
 from .urls import USER_LOGIN_URL, SUBUSER_LOGIN_URL, PANEL_URL, START_URL, STOP_URL, RESTART_URL

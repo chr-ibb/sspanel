@@ -1,5 +1,11 @@
-# TODO header
-# TODO refactor subuser to be after serverid, and give it a default value. maybe.
+"""
+sspanel.api
+
+This module implements the SSPanel API.
+
+:copyright: (c) 2021 by Christopher Ibbotson.
+:license: MIT, see LICENSE for more details.
+"""
 
 from . import ControlPanel
 

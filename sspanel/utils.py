@@ -1,4 +1,8 @@
-# TODO header
+"""
+sspanel.utils
+
+This module provides utility functions that are used in SSPanel.
+"""
 
 def find_between(s: str, before: str, after: str):
 	"""Searches string S and finds the first substring found between the

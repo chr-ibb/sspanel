@@ -1,4 +1,11 @@
-# TODO heading. Description, copyright, license, author, etc. 
+"""
+SSPanel
+
+Simple API for the SurvivalServers.com Control Panel using HTTP requests.
+
+:copyright: (c) 2021 by Christopher Ibbotson.
+:license: MIT, see LICENSE for more details.
+"""
 
 # TODO Check compatibility
 
