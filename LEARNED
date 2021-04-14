@@ -7,6 +7,10 @@ Concepts and skills learned (zero prior experience):
 	Inspecting web page source
 	Monitoring XHR traffic to find the keys/values required for a post request form
 	Data encryption
+	Open source licensing
+	package distribution, setup.py, wheel
+
+
 
 Concepts and skills practiced (little to moderate prior experience):
 	Python packages and modules
