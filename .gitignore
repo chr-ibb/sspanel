@@ -1,5 +1,7 @@
-login_info.py
 __pycache__
-which.py
+sspanel.egg-info
+dist
+login_info.py
 test.py
 run_test.bat
+build
