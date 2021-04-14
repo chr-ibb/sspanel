@@ -4,7 +4,6 @@ sspanel.control_panel
 This module contains the ControlPanel class, the primary object powering SSPanel.
 """
 
-
 import requests
 import datetime
 from .urls import USER_LOGIN_URL, SUBUSER_LOGIN_URL, PANEL_URL, START_URL, STOP_URL, RESTART_URL
@@ -12,10 +11,8 @@ from .server_info import ServerInfo
 from .utils import string_between
 from .exceptions import (
 	LoginError, PanelPasswordError, ServerStartError, ServerStopError, ServerRestartError, LimitExceededError)
+from importlib.resources import path
 
-CERT = "sspanel/certificate/survivalservers-com-chain.pem"
-
-# TODO Do I need an absolute path for CERT? 
 
 class ControlPanel:
 	"""A user-created :class:`ControlPanel <ControlPanel>` object.
@@ -132,7 +129,8 @@ class ControlPanel:
 		def get_info(sesh: requests.Session):
 			print("Gathering info...        \r", end="")
 			url = PANEL_URL + self.serverid
-			resp = sesh.get(url, verify=CERT)
+			with cert_path() as cert:
+				resp = sesh.get(url, verify=cert)
 			resp.raise_for_status()
 			s_info = ServerInfo(resp.text)
 			print("Info gathered            ")
@@ -161,7 +159,8 @@ class ControlPanel:
 			'password': self.password
 		}
 		with requests.Session() as sesh:
-			resp = sesh.post(url, data=payload, verify=CERT)
+			with cert_path() as cert:
+				resp = sesh.post(url, data=payload, verify=cert)
 			resp.raise_for_status()
 			if resp.text != '1':
 				raise LoginError()
@@ -176,7 +175,8 @@ class ControlPanel:
 		"""
 		print("Finding panel password...\r", end="")
 		url = PANEL_URL + self.serverid
-		resp = sesh.get(url, verify=CERT)
+		with cert_path() as cert:
+			resp = sesh.get(url, verify=cert)
 		resp.raise_for_status()
 		search_phrase = "username=" + self.username + "&password="
 		p = string_between(resp.text, search_phrase, "&")
@@ -196,7 +196,8 @@ class ControlPanel:
 			'gameserverid': self.serverid,
 			'subuser': '1' if self.subuser else '0'
 		}
-		resp = sesh.post(url, data=payload, verify=CERT)
+		with cert_path() as cert:
+			resp = sesh.post(url, data=payload, verify=cert)
 		resp.raise_for_status()
 		self.last_action = datetime.datetime.now()
 		return resp.text
@@ -214,7 +215,14 @@ class ControlPanel:
 		"""Returns the page source text of the server's Control Panel"""
 		def get_panel_text(sesh):
 			url = PANEL_URL + self.serverid
-			resp = sesh.get(url, verify=CERT)
+			with cert_path() as cert:
+				resp = sesh.get(url, verify=cert)
 			resp.raise_for_status()
 			return resp.text
 		return self.__login_and(get_panel_text)
+
+
+def cert_path():
+	"""Returns context manager which provides a pathlib.Path object
+	for the sspanel/data/survivalservers-com-chain.pem file path."""
+	return path('sspanel.data', 'survivalservers-com-chain.pem')
