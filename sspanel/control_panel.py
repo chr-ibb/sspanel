@@ -6,10 +6,9 @@ from .utils import string_between
 from .exceptions import (
 	LoginError, PanelPasswordError, ServerStartError, ServerStopError, ServerRestartError, LimitExceededError)
 
-CERT = "certificate/survivalservers-com-chain.pem"
+CERT = "sspanel/certificate/survivalservers-com-chain.pem"
 
-# TODO ensure the CERT file works. Right now I have it in two locations, it seems to depend where you are running python from...
-# it should just always check the same place. 
+# TODO Do I need an absolute path for CERT? 
 
 class ControlPanel:
 	"""A user-created :class:`ControlPanel <ControlPanel>` object.
