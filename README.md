@@ -58,6 +58,15 @@ via HTTPS requests. It allows for starting, stopping, and restarting a server, a
 - sspanel.**ServerInfo**  
     - #TODO
 
+
+## Installing SSPanel
+
+SSPanel is available on PyPI:
+
+```console
+$ python -m pip install sspanel
+```
+
 ## Etc
 
 Only tested with a Valheim server; that is all I have access to. 
