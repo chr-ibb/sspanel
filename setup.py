@@ -19,8 +19,8 @@ DESCRIPTION = 'Simple API for the SurvivalServers.com Control Panel using HTTP r
 URL = 'https://github.com/chr-ibb/sspanel'
 EMAIL = 'me@chribbotson.com'
 AUTHOR = 'Christopher Ibbotson'
-REQUIRES_PYTHON = '>=3.6.0'
-VERSION = '0.1.0'
+REQUIRES_PYTHON = '>=3.7.0'
+VERSION = '0.1.1'
 
 # What packages are required for this module to be executed?
 REQUIRED = [
@@ -115,7 +115,7 @@ setup(
     # },
     package_data={
         "": ['LICENSE'],
-        "sspanel": ["certificate/*.pem"]
+        "sspanel": ["data/*.pem"]
     },
     install_requires=REQUIRED,
     extras_require=EXTRAS,
@@ -127,12 +127,13 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy'
     ],
+    zip_safe=True,
     # $ setup.py publish support.
     cmdclass={
         'upload': UploadCommand,
