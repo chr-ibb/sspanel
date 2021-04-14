@@ -70,6 +70,6 @@ $ python -m pip install sspanel
 
 ## Etc
 
-Only tested with a Valheim server; that is all I have access to. 
+Only tested with a Valheim server, using a subuser account; that is all I have access to. 
 
 Makes use of the [Requests](https://github.com/psf/requests) library.
